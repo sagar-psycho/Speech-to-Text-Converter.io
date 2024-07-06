@@ -76,3 +76,10 @@ nav{
     margin: 20px auto;
     width: 80%;
 }
+#copy-message {
+    display: none;
+    text-align: center;
+    color: green;
+    font-weight: bold;
+    margin-top: 10px;
+}
