@@ -5,8 +5,6 @@ window.onload = function() {
     const output = document.getElementById('output');
     const copyBtn = document.getElementById('textco');
     const copyMessage = document.getElementById('copy-message');
-    const historyList = document.getElementById('history-list');
-    const clearHistoryBtn = document.getElementById('clear-history-btn');
 
     let recognition;
     let isRecognizing = false;
@@ -47,11 +45,6 @@ window.onload = function() {
             }
 
             output.value = finalTranscript + interimTranscript;
-
-            // Store final transcript to local storage only when it is complete
-            if (finalTranscript) {
-                storeInHistory(finalTranscript);
-            }
         };
     } catch (error) {
         console.error('Speech recognition not supported', error);
@@ -79,42 +72,4 @@ window.onload = function() {
             copyMessage.style.display = 'none';
         }, 2000);
     });
-
-    clearHistoryBtn.addEventListener('click', function() {
-        localStorage.removeItem('speechToTextHistory');
-        renderHistory();
-    });
-
-    function storeInHistory(text) {
-        let history = JSON.parse(localStorage.getItem('speechToTextHistory')) || [];
-        history.push(text);
-        localStorage.setItem('speechToTextHistory', JSON.stringify(history));
-        renderHistory();
-    }
-
-    function renderHistory() {
-        let history = JSON.parse(localStorage.getItem('speechToTextHistory')) || [];
-        historyList.innerHTML = ''; // Clear the existing history list
-        history.forEach((item, index) => {
-            const li = document.createElement('li');
-            li.textContent = item;
-            const deleteBtn = document.createElement('button');
-            deleteBtn.textContent = 'Delete';
-            deleteBtn.addEventListener('click', () => {
-                deleteFromHistory(index);
-            });
-            li.appendChild(deleteBtn);
-            historyList.appendChild(li);
-        });
-    }
-
-    function deleteFromHistory(index) {
-        let history = JSON.parse(localStorage.getItem('speechToTextHistory')) || [];
-        history.splice(index, 1);
-        localStorage.setItem('speechToTextHistory', JSON.stringify(history));
-        renderHistory();
-    }
-
-    // Initial render of history
-    renderHistory();
 };
