@@ -46,7 +46,7 @@
             <div class="speech-to-text">
                 <p id="status">Click "Start" to begin speech recognition.</p>
                 <textarea id="output" rows="10" cols="50" readonly></textarea>
-                <div id="copy-message" style="display: none;"></div><br><br><br>
+                <br><br>
                 <div class="button-container">
                     <button id="start-btn" class="btn btn-outline-success">Start</button>
                     <button id="stop-btn" class="btn btn-outline-danger">Stop</button>
@@ -54,11 +54,12 @@
                         <i style="font-size:24px" class="fa">&#xf0c5;</i>
                     </button>
                 </div>
+                <div id="copy-message" style="display: none;"></div>
             </div>
             <div class="history">
                 <h2>History</h2>
-                <button style="float: right; margin-top: -50px;" id="clear-history-btn" class="btn btn-outline-secondary">
-                    <i class="material-icons" style="color:red; padding: 2px;">&#xe872;</i>
+                <button id="clear-history-btn" class="btn btn-outline-secondary">
+                    <i class="material-icons" style=" padding: 2px;">&#xe872;</i>
                 </button>
                 <ul id="history-list"></ul>
             </div>
