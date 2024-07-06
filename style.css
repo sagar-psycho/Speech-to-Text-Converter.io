@@ -75,7 +75,7 @@ nav{
 }
 .faq{
     margin: 20px auto;
-    width: 80%;
+    max-width: 500px;
 }
 #copy-message {
     display: none;
