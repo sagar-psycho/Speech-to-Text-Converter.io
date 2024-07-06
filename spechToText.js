@@ -1,125 +1,120 @@
-// Initialize speech recognition
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-const recognition = new SpeechRecognition();
+window.onload = function() {
+    const startBtn = document.getElementById('start-btn');
+    const stopBtn = document.getElementById('stop-btn');
+    const status = document.getElementById('status');
+    const output = document.getElementById('output');
+    const copyBtn = document.getElementById('textco');
+    const copyMessage = document.getElementById('copy-message');
+    const historyList = document.getElementById('history-list');
+    const clearHistoryBtn = document.getElementById('clear-history-btn');
 
-recognition.continuous = true;
-recognition.interimResults = true;
+    let recognition;
+    let isRecognizing = false;
+    let finalTranscript = '';
 
-let recognizing = false;
-let interimTranscript = ''; // To store interim results
-let lastTranscriptUpdateTime = 0; // To track time of last transcript update
+    try {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = 'en-US';
 
-// Start speech recognition
-document.getElementById('start-btn').addEventListener('click', () => {
-    if (recognizing) {
-        recognition.stop();
-        recognizing = false;
-        return;
-    }
-    recognition.start();
-    recognizing = true;
-    interimTranscript = ''; // Clear interim transcript
-    lastTranscriptUpdateTime = 0;
-    document.getElementById('status').textContent = 'Listening...';
-});
+        recognition.onstart = function() {
+            isRecognizing = true;
+            status.textContent = "Listening...";
+        };
 
-// Stop speech recognition
-document.getElementById('stop-btn').addEventListener('click', () => {
-    if (recognizing) {
-        recognition.stop();
-        recognizing = false;
-    }
-    document.getElementById('status').textContent = 'Stopped.';
-});
+        recognition.onend = function() {
+            isRecognizing = false;
+            status.textContent = "Click 'Start' to begin speech recognition.";
+        };
 
-// Handle speech recognition results
-recognition.onresult = (event) => {
-    let transcript = document.getElementById('output').value; // Accumulate existing transcript
-    for (let i = event.resultIndex; i < event.results.length; ++i) {
-        if (event.results[i].isFinal) {
-            transcript += event.results[i][0].transcript;
-        } else {
-            let interimResult = event.results[i][0].transcript.trim();
-            if (interimResult !== '' && Date.now() - lastTranscriptUpdateTime > 500) {
-                interimTranscript += interimResult + ' ';
-                lastTranscriptUpdateTime = Date.now();
+        recognition.onerror = function(event) {
+            console.error('Recognition error: ', event.error);
+            status.textContent = "Error occurred in recognition: " + event.error;
+        };
+
+        recognition.onresult = function(event) {
+            let interimTranscript = '';
+            finalTranscript = '';
+
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+                if (event.results[i].isFinal) {
+                    finalTranscript += event.results[i][0].transcript;
+                } else {
+                    interimTranscript += event.results[i][0].transcript;
+                }
             }
-        }
+
+            output.value = finalTranscript + interimTranscript;
+
+            // Store final transcript to local storage only when it is complete
+            if (finalTranscript) {
+                storeInHistory(finalTranscript);
+            }
+        };
+    } catch (error) {
+        console.error('Speech recognition not supported', error);
+        status.textContent = 'Speech recognition not supported in this browser.';
     }
-    document.getElementById('output').value = transcript;
-};
 
-// Handle speech recognition end
-recognition.onend = () => {
-    recognizing = false;
-    document.getElementById('status').textContent = 'Stopped.';
-    let finalTranscript = document.getElementById('output').value.trim();
-    saveToHistory(finalTranscript); // Save final transcript to history
-};
+    startBtn.addEventListener('click', function() {
+        if (!isRecognizing && recognition) {
+            recognition.start();
+        }
+    });
 
-// Handle speech recognition errors
-recognition.onerror = (event) => {
-    console.error('Speech recognition error detected: ' + event.error);
-    document.getElementById('status').textContent = 'Error occurred: ' + event.error;
-};
+    stopBtn.addEventListener('click', function() {
+        if (isRecognizing && recognition) {
+            recognition.stop();
+        }
+    });
 
-// Save to history in local storage
-function saveToHistory(text) {
-    let history = JSON.parse(localStorage.getItem('speechToTextHistory')) || [];
-    if (text !== '') {
+    copyBtn.addEventListener('click', function() {
+        output.select();
+        document.execCommand('copy');
+        copyMessage.style.display = 'block';
+        copyMessage.textContent = 'Copied to clipboard';
+        setTimeout(() => {
+            copyMessage.style.display = 'none';
+        }, 2000);
+    });
+
+    clearHistoryBtn.addEventListener('click', function() {
+        localStorage.removeItem('speechToTextHistory');
+        renderHistory();
+    });
+
+    function storeInHistory(text) {
+        let history = JSON.parse(localStorage.getItem('speechToTextHistory')) || [];
         history.push(text);
         localStorage.setItem('speechToTextHistory', JSON.stringify(history));
-        displayHistory();
+        renderHistory();
     }
-}
 
-function displayHistory() {
-    let history = JSON.parse(localStorage.getItem('speechToTextHistory')) || [];
-    let historyList = document.getElementById('history-list');
-    historyList.innerHTML = '';
-    history.forEach((item) => {
-        let li = document.createElement('li');
-        li.textContent = item;
-        historyList.appendChild(li);
-    });
-}
-
-document.addEventListener('DOMContentLoaded', displayHistory);
-
-document.getElementById('clear-history-btn').addEventListener('click', () => {
-    localStorage.removeItem('speechToTextHistory');
-    displayHistory();
-});
-
-document.getElementById('textco').addEventListener('click', () => {
-    let output = document.getElementById('output');
-    output.select();
-    document.execCommand('copy');
-
-    showCopyMessage();
-});
-
-// Function to show copy message in a div
-function showCopyMessage() {
-    let copyMessageDiv = document.getElementById('copy-message');
-    if (!copyMessageDiv) {
-        copyMessageDiv = document.createElement('div');
-        copyMessageDiv.id = 'copy-message';
-        copyMessageDiv.textContent = 'Text copied to clipboard!';
-        copyMessageDiv.style.backgroundColor = '#4CAF50';
-        copyMessageDiv.style.color = 'white';
-        copyMessageDiv.style.padding = '10px';
-        copyMessageDiv.style.position = 'fixed';
-        copyMessageDiv.style.bottom = '20px';
-        copyMessageDiv.style.left = '50%';
-        copyMessageDiv.style.transform = 'translateX(-50%)';
-        copyMessageDiv.style.borderRadius = '5px';
-        copyMessageDiv.style.zIndex = '1000';
-        document.body.appendChild(copyMessageDiv);
-
-        // Automatically remove the message after a few seconds
-        setTimeout(() => {
-            copyMessageDiv.remove();
-        }, 3000); // Remove after 3 seconds
+    function renderHistory() {
+        let history = JSON.parse(localStorage.getItem('speechToTextHistory')) || [];
+        historyList.innerHTML = ''; // Clear the existing history list
+        history.forEach((item, index) => {
+            const li = document.createElement('li');
+            li.textContent = item;
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = 'Delete';
+            deleteBtn.addEventListener('click', () => {
+                deleteFromHistory(index);
+            });
+            li.appendChild(deleteBtn);
+            historyList.appendChild(li);
+        });
     }
-}
+
+    function deleteFromHistory(index) {
+        let history = JSON.parse(localStorage.getItem('speechToTextHistory')) || [];
+        history.splice(index, 1);
+        localStorage.setItem('speechToTextHistory', JSON.stringify(history));
+        renderHistory();
+    }
+
+    // Initial render of history
+    renderHistory();
+};
