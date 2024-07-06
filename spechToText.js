@@ -64,12 +64,22 @@ window.onload = function() {
     });
 
     copyBtn.addEventListener('click', function() {
-        output.select();
-        document.execCommand('copy');
-        copyMessage.style.display = 'block';
-        copyMessage.textContent = 'Copied to clipboard';
-        setTimeout(() => {
-            copyMessage.style.display = 'none';
-        }, 2000);
+        if (output.value.trim() === '') {
+            copyMessage.style.display = 'block';
+            copyMessage.style.color = 'red';
+            copyMessage.textContent = 'Text area is empty. Please speak something first.';
+            setTimeout(() => {
+                copyMessage.style.display = 'none';
+            }, 2000);
+        } else {
+            output.select();
+            document.execCommand('copy');
+            copyMessage.style.display = 'block';
+            copyMessage.style.color = 'green';
+            copyMessage.textContent = 'Copied to clipboard';
+            setTimeout(() => {
+                copyMessage.style.display = 'none';
+            }, 2000);
+        }
     });
 };
