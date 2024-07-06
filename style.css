@@ -1,10 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Baskervville+SC&display=swap');
 body {
     font-family: Arial, sans-serif;
     margin: 20px;
 }
 
 .containers {
-    max-width: 1200px; /* Increased max-width for side-by-side layout */
+    max-width: 500px;
     margin: 0 auto;
     padding: 20px;
     border: 1px solid #ccc;
@@ -18,12 +19,12 @@ h1, h2 {
 
 .main-content {
     display: flex;
-    flex-direction: column; /* Default to column layout for mobile */
-    gap: 20px; /* Add some space between the sections */
+    flex-direction: column;
+    gap: 20px;
 }
 
 .speech-to-text, .history {
-    flex: 1; /* Allow both sections to take equal space */
+    flex: 1;
 }
 
 .button-container {
@@ -44,6 +45,7 @@ textarea {
     margin: 10px 0;
     padding: 10px;
     font-size: 16px;
+    font-family: "Baskervville SC", serif;
 }
 
 #history-list {
@@ -63,7 +65,6 @@ textarea {
     display: none;
 }
 
-/* Media query for larger screens */
 @media (min-width: 768px) {
     .main-content {
         flex-direction: row;
