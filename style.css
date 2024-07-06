@@ -5,7 +5,7 @@ body {
 }
 
 .containers {
-    max-width: 500px;
+    max-width: 50%;
     margin: 20px auto;
     padding: 20px;
     border: 1px solid #ccc;
@@ -75,7 +75,7 @@ nav{
 }
 .faq{
     margin: 20px auto;
-    max-width: 500px;
+    max-width: 50%;
 }
 #copy-message {
     display: none;
