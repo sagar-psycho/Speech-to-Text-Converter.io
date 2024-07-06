@@ -68,7 +68,11 @@ textarea {
     .main-content {
         flex-direction: row;
     }
-    .containers{
-    margin: 20px 40px auto;
-    }
+}
+nav{
+    color: black;
+}
+.faq{
+    margin: 20px auto;
+    width: 80%;
 }
