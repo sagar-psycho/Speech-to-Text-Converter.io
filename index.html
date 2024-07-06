@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speech to Text Converter</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="containers">
+        <h1>Speech to Text Converter</h1>
+        <div class="main-content">
+            <div class="speech-to-text">
+                <p id="status">Click "Start" to begin speech recognition.</p>
+                <textarea id="output" rows="10" cols="50" readonly></textarea>
+                <div id="copy-message" style="display: none;"></div><br><br><br>
+                <div class="button-container">
+                    <button id="start-btn" class="btn btn-outline-success">Start</button>
+                    <button id="stop-btn" class="btn btn-outline-danger">Stop</button>
+                    <button id="textco" class="btn btn-outline-primary">
+                        <i style="font-size:24px" class="fa">&#xf0c5;</i>
+                    </button>
+                </div>
+            </div>
+            <div class="history">
+                <h2>History</h2>
+                <button style="float: right; margin-top: -50px;" id="clear-history-btn" class="btn btn-outline-secondary">
+                    <i class="material-icons" style="color:red; padding: 2px;">&#xe872;</i>
+                </button>
+                <ul id="history-list"></ul>
+            </div>
+        </div>
+    </div>
+    <script src="spechToText.js"></script>
+</body>
+</html>
